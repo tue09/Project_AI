@@ -27,7 +27,7 @@
 					"jsonFile" : "directory-_deps.json-build-Debug-b992325f012a7585f532.json",
 					"minimumCMakeVersion" : 
 					{
-						"string" : "3.7"
+						"string" : "3.6"
 					},
 					"parentIndex" : 0,
 					"projectIndex" : 1,
