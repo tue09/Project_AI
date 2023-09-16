@@ -89,7 +89,7 @@ std::tuple<int, Solution, std::map<int, std::vector<int>>> MultiLevel::mergeSol(
     }
 
     // Select 5% shortest edge from Solution
-    int numUpdate = NumCus*0.05;
+    int numUpdate = NumCus*0.1;
     std::vector<int> ro;
     std::vector<int> co;
     while (update.size() < numUpdate)

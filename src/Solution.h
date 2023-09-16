@@ -78,20 +78,20 @@ public:
 
     std::vector<double> getScoreATrip(int tripIndex, TripType type);
 
-    Solution *relocate(const std::vector<std::string> &tabuList, double bestScore = std::numeric_limits<double>::max(),
+    Solution *relocate(const std::vector<std::string> &tabuList,  Solution &bestFeasibleSolution,
                        RouteType type = ALL);
 
-    Solution *exchange(const std::vector<std::string> &tabuList, double bestScore = std::numeric_limits<double>::max(),
+    Solution *exchange(const std::vector<std::string> &tabuList,  Solution &bestFeasibleSolution,
                        RouteType type = ALL);
 
-    Solution *orOpt(const std::vector<std::string> &tabuList, double bestScore = std::numeric_limits<double>::max(),
+    Solution *orOpt(const std::vector<std::string> &tabuList,  Solution &bestFeasibleSolution,
                     RouteType type = ALL, int dis = 1);
 
     Solution *
-    crossExchange(const std::vector<std::string> &tabuList, double bestScore = std::numeric_limits<double>::max(),
+    crossExchange(const std::vector<std::string> &tabuList,  Solution &bestFeasibleSolution,
                   RouteType type = ALL, int dis1 = 1, int dis2 = 0);
 
-    Solution *twoOpt(const std::vector<std::string> &tabuList, double bestScore = std::numeric_limits<double>::max(),
+    Solution *twoOpt(const std::vector<std::string> &tabuList,  Solution &bestFeasibleSolution,
                      RouteType type = ALL);
 
     Solution ejection();

@@ -22,7 +22,7 @@
     },
     "multiLevel_para": {
         "num_level": 3,
-        "percent_match": 0.15,
+        "percent_match": 0.2,
         "tabu_max_ite": 40,
         "tabu_size": 5
    
@@ -37,6 +37,6 @@
         "tabuAlpha2": 1,
         "maxEjectionLevel": 2,
         "tabuBeta": 0.5,
-        "tabuEpsilon": 1e-4
+        "tabuEpsilon": -1e-4
     }
 }
