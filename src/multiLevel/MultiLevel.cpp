@@ -62,7 +62,6 @@ std::tuple<int, Solution, std::map<int, std::vector<int>>> MultiLevel::mergeSol(
 {
     //make update for matrix
     std::vector<std::tuple<int , int>> update_Real;
-    
     std::vector<std::tuple<int , int>> update;
     std::vector<std::tuple<int , int>> edgeSol;
     
@@ -118,9 +117,9 @@ std::tuple<int, Solution, std::map<int, std::vector<int>>> MultiLevel::mergeSol(
         co.push_back(col);
         update.push_back(std::make_tuple(row, col));
     }
-
     for (int l = 0; l < update.size(); l++)
     {
+
         Solution solbefore = solution;
         int row = std::get<0> (update[l]);
         int col = std::get<1> (update[l]);
@@ -1430,7 +1429,7 @@ std::tuple<Solution, std::map<int, std::vector<int>>, std::vector<double>> Multi
         TabuSearch tabuSearch(config, input);
         MultiLevel multilev(config, input);
         currentSol.setInput(input);
-        std::cout<<std::endl<<"Score before tabu in merge process Level "<<(i+1)<<" is: "<<currentSol.getScore();
+        std::cout<<std::endl<<"Score before tabu in merge process level "<<i+1<<" is: "<<currentSol.getScore();
         std::tuple<double, Solution, std::vector<std::vector<int>>> result = tabuSearch.run(log, path_e, input, currentSol);
         Solution sol;
         sol.setInput(input);

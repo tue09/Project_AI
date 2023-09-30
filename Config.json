@@ -4,7 +4,7 @@
     "TaburesultFolder": "D:/Users/ADMIN/Documents/0.Study/Multi_Level/DASTS2_VERSION9_C/tabu_result",
     "MultiLevelresultFolder": "D:/Users/ADMIN/Documents/0.Study/Multi_Level/DASTS2_VERSION9_C/multilevel_result/",
     "dataPath": "data/",
-    "dataName": "50.30.1.txt",
+    "dataName": "50.40.1.txt",
     "dataType": "50",
     "NumRunPerDataSet": 5,
     "multiData": false,
@@ -23,7 +23,7 @@
     "multiLevel_para": {
         "num_level": 3,
         "percent_match": 0.2,
-        "tabu_max_ite": 40,
+        "tabu_max_ite": 100,
         "tabu_size": 5
    
     },

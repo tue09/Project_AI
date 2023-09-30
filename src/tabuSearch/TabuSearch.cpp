@@ -75,6 +75,7 @@ std::tuple<double, Solution, std::vector<std::vector<int>>> TabuSearch::run(json
         {
             actOrd = Random::get(1, 5);
         }
+        actOrd = Random::get(1, 5);
         //std::cout<<std::endl<<"actord is: "<<actOrd;
         //config.isCycle = 1;
         
@@ -136,17 +137,8 @@ std::tuple<double, Solution, std::vector<std::vector<int>>> TabuSearch::run(json
             json jTech(currentSolution.techTripList);
             if (currentSolution.check_feasible() && (currentScore - bestFeasibleScore < config.tabuEpsilon))
             {
-                notFeasibleImprove = 0;
-                bestScore = currentScore;
                 //config.isCycle = 0;
-                bestSolution = currentSolution;
-                bestSolution.setInput(input);
-                notImproveIter = 0;
                 updatePenalty(bestSolution.dz, bestSolution.dz);
-                bestSolution.alpha1 = alpha1;
-                bestSolution.alpha2 = alpha2;
-                currentSolution.alpha1 = alpha1;
-                currentSolution.alpha2 = alpha2;
                 feasible["best feasible score"] = std::to_string(currentScore);
                 feasible["best feasible"] = std::to_string(currentScore) + jDrone.dump() + " || " + jTech.dump();
                 bestFeasibleSolution = currentSolution;
@@ -259,6 +251,7 @@ Solution TabuSearch::runInterRoute(Solution &solution)
                                       INTER_TWO_OPT};
 
     double score = solution.getScore();
+    Solution solution1 = solution;
     double newScore;
 
     Solution *s;
@@ -275,7 +268,7 @@ Solution TabuSearch::runInterRoute(Solution &solution)
             {
             case INTER_RELOCATE:
             {
-                s = solution.relocate({}, solution, INTER);
+                s = solution.relocate({}, solution1, INTER);
                 if (s != nullptr)
                 {
                     newScore = s->getScore();
@@ -291,7 +284,7 @@ Solution TabuSearch::runInterRoute(Solution &solution)
             }
             case INTER_EXCHANGE:
             {
-                s = solution.exchange({}, solution, INTER);
+                s = solution.exchange({}, solution1, INTER);
                 if (s != nullptr)
                 {
                     newScore = s->getScore();
@@ -307,7 +300,7 @@ Solution TabuSearch::runInterRoute(Solution &solution)
             }
             case INTER_OR_OPT:
             {
-                s = solution.orOpt({}, solution, INTER);
+                s = solution.orOpt({}, solution1, INTER);
                 if (s != nullptr)
                 {
                     newScore = s->getScore();
@@ -323,7 +316,7 @@ Solution TabuSearch::runInterRoute(Solution &solution)
             }
             case INTER_TWO_OPT:
             {
-                s = solution.twoOpt({}, solution, INTER);
+                s = solution.twoOpt({}, solution1, INTER);
                 if (s != nullptr)
                 {
                     newScore = s->getScore();
@@ -339,7 +332,7 @@ Solution TabuSearch::runInterRoute(Solution &solution)
             }
             case INTER_CROSS_EXCHANGE:
             {
-                s = solution.crossExchange({}, solution, INTER);
+                s = solution.crossExchange({}, solution1, INTER);
                 if (s != nullptr)
                 {
                     newScore = s->getScore();
@@ -374,6 +367,7 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
     std::vector<IntraRouteType> order{INTRA_RELOCATE, INTRA_EXCHANGE, INTRA_OR_OPT, INTRA_TWO_OPT};
 
     double score = solution.getScore();
+    Solution solution1 = solution;
     double newScore;
     int x = 0;
     Solution *s;
@@ -389,7 +383,7 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
             {
             case INTRA_RELOCATE:
             {
-                s = solution.relocate({}, solution, INTRA);
+                s = solution.relocate({}, solution1, INTRA);
                 if (s != nullptr)
                 {
                     newScore = s->getScore();
@@ -405,7 +399,7 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
             }
             case INTRA_EXCHANGE:
             {
-                s = solution.exchange({}, solution, INTRA);
+                s = solution.exchange({}, solution1, INTRA);
                 if (s != nullptr)
                 {
                     newScore = s->getScore();
@@ -421,7 +415,7 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
             }
             case INTRA_TWO_OPT:
             {
-                s = solution.twoOpt({}, solution, INTRA);
+                s = solution.twoOpt({}, solution1, INTRA);
                 if (s != nullptr)
                 {
                     newScore = s->getScore();
@@ -437,7 +431,7 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
             }
             case INTRA_OR_OPT:
             {
-                s = solution.orOpt({}, solution, INTRA);
+                s = solution.orOpt({}, solution1, INTRA);
                 if (s != nullptr)
                 {
                     newScore = s->getScore();

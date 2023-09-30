@@ -1,0 +1,47 @@
+{
+    "20.10.3 | Average: ": 21.289113976342257,
+    "20.10.3 | Best: ": 21.289113976342257,
+    "20.10.3 | STD: ": 0.0,
+    "20.10.3.txt": {
+        "20.10.3.txt.1": {
+            "Best Score: ": 21.289113976342257,
+            "Best Solution: ": "21.289114 == [[[3,6,12,5,18,14]],[[11,9,19,7,4]]] || [[15,13,1,8,20],[16,2,10,17]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 3.741,
+            "Score List: ": "Level 0: 40.627910 | Level 1: -0.323132 | Level 2: -0.223800 | Level 3: -0.002633 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: -0.000000 | Post Optimization: 0.000000 | "
+        },
+        "20.10.3.txt.2": {
+            "Best Score: ": 21.289113976342257,
+            "Best Solution: ": "21.289114 == [[[3,6,12,5,18,14]],[[11,9,19,7,4]]] || [[15,13,1,8,20],[16,2,10,17]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 3.719,
+            "Score List: ": "Level 0: 40.627910 | Level 1: -0.323132 | Level 2: -0.223800 | Level 3: -0.002633 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: -0.000000 | Post Optimization: 0.000000 | "
+        },
+        "20.10.3.txt.3": {
+            "Best Score: ": 21.289113976342257,
+            "Best Solution: ": "21.289114 == [[[3,6,12,5,18,14]],[[11,9,19,7,4]]] || [[15,13,1,8,20],[16,2,10,17]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 3.564,
+            "Score List: ": "Level 0: 40.627910 | Level 1: -0.323132 | Level 2: -0.223800 | Level 3: -0.002633 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: -0.000000 | Post Optimization: 0.000000 | "
+        },
+        "20.10.3.txt.4": {
+            "Best Score: ": 21.289113976342257,
+            "Best Solution: ": "21.289114 == [[[3,6,12,5,18,14]],[[11,9,19,7,4]]] || [[15,13,1,8,20],[16,2,10,17]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 3.56,
+            "Score List: ": "Level 0: 40.627910 | Level 1: -0.323132 | Level 2: -0.223800 | Level 3: -0.002633 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: -0.000000 | Post Optimization: 0.000000 | "
+        },
+        "20.10.3.txt.5": {
+            "Best Score: ": 21.289113976342257,
+            "Best Solution: ": "21.289114 == [[[3,6,12,5,18,14]],[[11,9,19,7,4]]] || [[15,13,1,8,20],[16,2,10,17]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 3.557,
+            "Score List: ": "Level 0: 40.627910 | Level 1: -0.323132 | Level 2: -0.223800 | Level 3: -0.002633 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: -0.000000 | Post Optimization: 0.000000 | "
+        }
+    }
+}

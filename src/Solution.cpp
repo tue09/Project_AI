@@ -487,8 +487,6 @@ Solution::Solution(Config &config, Input &input, double alpha1, double alpha2)
     this->alpha2 = alpha2;
 }
 
-
-
 Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution &bestFeasibleSolution, RouteType type)
 {
     auto *bestSolution = new Solution(config, input, alpha1, alpha2);

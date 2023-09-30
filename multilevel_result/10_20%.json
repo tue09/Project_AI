@@ -1,47 +1,47 @@
 {
-    "10.10.1 | Average: ": 0.0,
-    "10.10.1 | Best: ": 0.0,
+    "10.10.1 | Average: ": 18.09346866445267,
+    "10.10.1 | Best: ": 18.09346866445267,
     "10.10.1 | STD: ": 0.0,
     "10.10.1.txt": {
         "10.10.1.txt.1": {
-            "Best Score: ": 0.0,
-            "Best Solution: ": "0.000000 == [[],[]] || [[],[]]",
+            "Best Score: ": 18.09346866445267,
+            "Best Solution: ": "18.093469 == [[[7,3,8]],[[6,10,9]]] || [[1,4,5],[2]]",
             "Num_Drone: ": 2,
             "Num_Tech: ": 2,
-            "Run Time: ": 0.164,
-            "Score List: ": "Level 0: 22.239228 | Level 1: 0.002407 | Level 2: -0.188370 | Level 3: 0.000000 | Post Optimization: -1.000000 | Level 2: nan | Level 1: nan | Level 0: nan | Post Optimization: nan | "
+            "Run Time: ": 0.658,
+            "Score List: ": "Level 0: 22.239228 | Level 1: -0.186417 | Level 2: 0.000000 | Level 3: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
         },
         "10.10.1.txt.2": {
-            "Best Score: ": 0.0,
-            "Best Solution: ": "0.000000 == [[],[]] || [[],[]]",
+            "Best Score: ": 18.09346866445267,
+            "Best Solution: ": "18.093469 == [[[7,3,8]],[[6,10,9]]] || [[1,4,5],[2]]",
             "Num_Drone: ": 2,
             "Num_Tech: ": 2,
-            "Run Time: ": 0.164,
-            "Score List: ": "Level 0: 22.239228 | Level 1: 0.002407 | Level 2: -0.188370 | Level 3: 0.000000 | Post Optimization: -1.000000 | Level 2: nan | Level 1: nan | Level 0: nan | Post Optimization: nan | "
+            "Run Time: ": 0.719,
+            "Score List: ": "Level 0: 22.239228 | Level 1: -0.186417 | Level 2: 0.000000 | Level 3: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
         },
         "10.10.1.txt.3": {
-            "Best Score: ": 0.0,
-            "Best Solution: ": "0.000000 == [[],[]] || [[],[]]",
+            "Best Score: ": 18.09346866445267,
+            "Best Solution: ": "18.093469 == [[[7,3,8]],[[6,10,9]]] || [[1,4,5],[2]]",
             "Num_Drone: ": 2,
             "Num_Tech: ": 2,
-            "Run Time: ": 0.166,
-            "Score List: ": "Level 0: 22.239228 | Level 1: 0.002407 | Level 2: -0.188370 | Level 3: 0.000000 | Post Optimization: -1.000000 | Level 2: nan | Level 1: nan | Level 0: nan | Post Optimization: nan | "
+            "Run Time: ": 0.69,
+            "Score List: ": "Level 0: 22.239228 | Level 1: -0.186417 | Level 2: 0.000000 | Level 3: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
         },
         "10.10.1.txt.4": {
-            "Best Score: ": 0.0,
-            "Best Solution: ": "0.000000 == [[],[]] || [[],[]]",
+            "Best Score: ": 18.09346866445267,
+            "Best Solution: ": "18.093469 == [[[7,3,8]],[[6,10,9]]] || [[1,4,5],[2]]",
             "Num_Drone: ": 2,
             "Num_Tech: ": 2,
-            "Run Time: ": 0.159,
-            "Score List: ": "Level 0: 22.239228 | Level 1: 0.002407 | Level 2: -0.188370 | Level 3: 0.000000 | Post Optimization: -1.000000 | Level 2: nan | Level 1: nan | Level 0: nan | Post Optimization: nan | "
+            "Run Time: ": 0.649,
+            "Score List: ": "Level 0: 22.239228 | Level 1: -0.186417 | Level 2: 0.000000 | Level 3: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
         },
         "10.10.1.txt.5": {
-            "Best Score: ": 0.0,
-            "Best Solution: ": "0.000000 == [[],[]] || [[],[]]",
+            "Best Score: ": 18.09346866445267,
+            "Best Solution: ": "18.093469 == [[[7,3,8]],[[6,10,9]]] || [[1,4,5],[2]]",
             "Num_Drone: ": 2,
             "Num_Tech: ": 2,
-            "Run Time: ": 0.169,
-            "Score List: ": "Level 0: 22.239228 | Level 1: 0.002407 | Level 2: -0.188370 | Level 3: 0.000000 | Post Optimization: -1.000000 | Level 2: nan | Level 1: nan | Level 0: nan | Post Optimization: nan | "
+            "Run Time: ": 0.659,
+            "Score List: ": "Level 0: 22.239228 | Level 1: -0.186417 | Level 2: 0.000000 | Level 3: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
         }
     }
 }
