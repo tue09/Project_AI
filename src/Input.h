@@ -17,7 +17,9 @@ public:
     int numCus{};
     std::string dataSet;
     std::vector<bool> cusOnlyServedByTech;
-
+    bool runAll;
+    std::vector<int> neighborhoodOrders;
+    
     Input(double droneVelocity, double techVelocity, int limitationFightTime, const std::string &path);
 
     Input();

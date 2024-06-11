@@ -32,7 +32,7 @@ public:
     std::vector<std::vector<double>> droneTimeMatrix{};
     std::vector<std::vector<double>> techTimeMatrix{};
 
-    std::vector<std::vector<double>> convertMatrix (std::vector<std::vector<double>> currentMatrix, std::map<int, std::vector<int>> Map);
+    std::tuple<std::vector<std::vector<double>>, std::vector<std::vector<double>>> convertMatrix (std::vector<std::vector<double>> currentMatrix, std::vector<std::vector<double>> matrixReBefore, std::map<int, std::vector<int>> Map);
 
     std::tuple<double, Solution, std::vector<std::vector<int>>> tabuInMultiLevel (Solution solution, int numRun);
 
@@ -44,7 +44,7 @@ public:
 
     std::tuple<Solution, std::vector<std::tuple<int, int>>> beUpdate(Solution solution, int NumCus, std::vector<std::vector<double>> distanceMatrix, int Level);
 
-    std::tuple<int, Solution, std::map<int, std::vector<int>>> mergeSol(Solution solution, int NumCus, std::vector<std::vector<int>> mainMatrix, std::vector<std::vector<double>> distanceMatrix, std::vector<bool> C1);
+    std::tuple<int, Solution, std::map<int, std::vector<int>>> mergeSol(Solution solution, int NumCus, std::vector<std::vector<int>> mainMatrix, std::vector<std::vector<double>> MatrixRe, std::vector<std::vector<double>> distanceMatrix, std::vector<bool> C1);
     
     std::tuple<Solution, std::map<int, std::vector<int>>, std::vector<double>> mergeProcess(Config &config, Input &input, std::vector<std::map<int, std::vector<int>>> &mapLevel, std::vector<std::vector<std::vector<double>>> &DistanceMatrixLevel, std::vector<std::vector<bool>> &C1Level); 
 

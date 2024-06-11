@@ -13,6 +13,11 @@ public:
     std::string dataType;
     int NumRunPerDataSet;
     bool multiData;
+    int addEjectionType;
+    int ejectionIte;
+    bool overwrite;
+    int run_type;
+
 
     double droneVelocity;
     double techVelocity;
@@ -27,12 +32,14 @@ public:
     bool use_intra;
     int num_level;
     double percent_match;
-    int tabu_max_ite;
+    double percent_select;
+    int tabuMaxIter;
     int tabu_size;
     bool isCycle;
+    int tabuDuration;
 
 
-    int tabuMaxIter;
+    
     int tabuNumRunPerDataSet;
     int tabuNotImproveIter;
     int minTabuDuration;

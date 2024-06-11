@@ -1,6 +1,3 @@
-//
-// Created by MacBook Pro on 02/06/2022.
-//
 
 #include "Solution.h"
 #include "Utils.h"
@@ -15,7 +12,8 @@ Solution *Solution::initSolution(Config &config, Input &input, InitType type, do
 {
     Solution *best = nullptr, *current;
     double bestScore = std::numeric_limits<double>::max(), currentScore;
-    if (type != DISTANCE)
+    //if (type != DISTANCE)
+    if (false)
     {
         current = new Solution(config, input, alpha1, alpha2);
         current->initByAngle(true, 1);
@@ -70,7 +68,6 @@ Solution *Solution::initSolution(Config &config, Input &input, InitType type, do
             bestScore = currentScore;
         }
     }
-    best->refactorSolution();
     return best;
 }
 
@@ -353,6 +350,7 @@ void Solution::initByAngle(bool reverse, int direction)
 
 double Solution::getScore()
 {
+
     std::vector<double> techCompleteTime(config.numTech, 0);
     std::vector<double> droneCompleteTime(config.numDrone, 0);
     std::vector<double> cusCompleteTime(input.numCus + 1, 0);
@@ -371,7 +369,6 @@ double Solution::getScore()
         std::vector<double> tripTime(maxTrip, 0);
         droneTripCompleteTime.push_back(tripTime);
     }
-
     double tmp, tmp1;
     dz = 0, cz = 0;
 
@@ -385,7 +382,6 @@ double Solution::getScore()
         }
 
         tmp = input.techTimes[0][techTripList[i][0]];
-
         cusCompleteTime[techTripList[i][0]] = tmp;
 
         for (int j = 0; j < (int)techTripList[i].size() - 1; j++)
@@ -393,14 +389,12 @@ double Solution::getScore()
             tmp += input.techTimes[techTripList[i][j]][techTripList[i][j + 1]];
             cusCompleteTime[techTripList[i][j + 1]] = tmp;
         }
-
         techCompleteTime[i] = tmp + input.techTimes[techTripList[i].back()][0];
         if (techCompleteTime[i] > allTechTime)
         {
             allTechTime = techCompleteTime[i];
         }
     }
-
     for (int i = 0; i < droneTripList.size(); i++)
     {
         tmp = 0;
@@ -410,7 +404,6 @@ double Solution::getScore()
             {
                 continue;
             }
-
             tmp1 = input.droneTimes[0][droneTripList[i][j][0]];
             cusCompleteTime[droneTripList[i][j][0]] = tmp1;
 
@@ -428,7 +421,6 @@ double Solution::getScore()
             allDroneTime = tmp;
         }
     }
-
     c = std::max(allDroneTime, allTechTime);
 
     for (int i = 0; i < techTripList.size(); i++)
@@ -516,22 +508,22 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
                             s.droneTripList[droneIndex][tripIndex].begin() + xIndex + 1);
 
                         double newScore = s.getScore();
-                        //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+
+                        //Method 1:
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){ // check aspiration condition
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = std::to_string(
-                                    droneTripList[droneIndex][tripIndex][xIndex]);
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                          s.droneTripList[droneIndex][tripIndex][xIndex])))
+                            
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = std::to_string(
+                                droneTripList[droneIndex][tripIndex][xIndex]);
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                          droneTripList[droneIndex][tripIndex][xIndex])))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -580,22 +572,21 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
 
                         double newScore = s.getScore();
 
-                        //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        //Method 1:
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = std::to_string(
-                                    droneTripList[droneIndex][tripIndex][xIndex]);
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                          s.droneTripList[droneIndex][tripIndex][xIndex])))
+                            
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = std::to_string(
+                                droneTripList[droneIndex][tripIndex][xIndex]);
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                          droneTripList[droneIndex][tripIndex][xIndex])))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -639,21 +630,19 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
 
                     double newScore = s.getScore();
 
-                    //Method 2:
-                    if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                    //Method 1:
+                    if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                         isImproved = true;
                         bestFeasibleSolution.droneTripList = s.droneTripList;
                         bestFeasibleSolution.techTripList = s.techTripList;
                         bestScore = newScore;
-                        if (newScore - curScore < config.tabuEpsilon){
-                            bestSolution->droneTripList = s.droneTripList;
-                            bestSolution->techTripList = s.techTripList;
-                            bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
-                            curScore = newScore;
-                        }
-                    }
-                    if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                        s.techTripList[techIndex][xIndex])))
+                        bestSolution->droneTripList = s.droneTripList;
+                        bestSolution->techTripList = s.techTripList;
+                        bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
+                        curScore = newScore;
+                        
+                    } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                        techTripList[techIndex][xIndex])))
                     {
                         bestSolution->droneTripList = s.droneTripList;
                         bestSolution->techTripList = s.techTripList;
@@ -702,21 +691,19 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
 
                     double newScore = s.getScore();
 
-                    //Method 2:
-                    if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                    //Method 1:
+                    if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                         isImproved = true;
                         bestFeasibleSolution.droneTripList = s.droneTripList;
                         bestFeasibleSolution.techTripList = s.techTripList;
                         bestScore = newScore;
-                        if (newScore - curScore < config.tabuEpsilon){
-                            bestSolution->droneTripList = s.droneTripList;
-                            bestSolution->techTripList = s.techTripList;
-                            bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
-                            curScore = newScore;
-                        }
-                    }
-                    if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                        s.techTripList[techIndex][xIndex])))
+                        bestSolution->droneTripList = s.droneTripList;
+                        bestSolution->techTripList = s.techTripList;
+                        bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
+                        curScore = newScore;
+                        
+                    } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                        techTripList[techIndex][xIndex])))
                     {
                         bestSolution->droneTripList = s.droneTripList;
                         bestSolution->techTripList = s.techTripList;
@@ -769,22 +756,21 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
                                 s.droneTripList[droneIndex][tripIndex].begin() + xIndex);
 
                             double newScore = s.getScore();
-                            //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            //Method 1:
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = std::to_string(
-                                        droneTripList[droneIndex][tripIndex][xIndex]);
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                            s.droneTripList[droneIndex][tripIndex][xIndex])))
+                                
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = std::to_string(
+                                    droneTripList[droneIndex][tripIndex][xIndex]);
+                                curScore = newScore;
+                                
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                            droneTripList[droneIndex][tripIndex][xIndex])))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -820,22 +806,20 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
                                     s.droneTripList[droneIndex][tripIndex].begin() + xIndex);
 
                                 newScore = s.getScore();
-                                //Method 2:
-                                if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                                //Method 1:
+                                if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                     isImproved = true;
                                     bestFeasibleSolution.droneTripList = s.droneTripList;
                                     bestFeasibleSolution.techTripList = s.techTripList;
                                     bestScore = newScore;
-                                    if (newScore - curScore < config.tabuEpsilon){
-                                        bestSolution->droneTripList = s.droneTripList;
-                                        bestSolution->techTripList = s.techTripList;
-                                        bestSolution->ext["state"] = std::to_string(
-                                            droneTripList[droneIndex][tripIndex][xIndex]);
-                                        curScore = newScore;
-                                    }
-                                }
-                                if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                                s.droneTripList[droneIndex][tripIndex][xIndex])))
+                                    bestSolution->droneTripList = s.droneTripList;
+                                    bestSolution->techTripList = s.techTripList;
+                                    bestSolution->ext["state"] = std::to_string(
+                                        droneTripList[droneIndex][tripIndex][xIndex]);
+                                    curScore = newScore;
+                                    
+                                } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                                droneTripList[droneIndex][tripIndex][xIndex])))
                                 {
                                     bestSolution->droneTripList = s.droneTripList;
                                     bestSolution->techTripList = s.techTripList;
@@ -874,22 +858,20 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
                             s.droneTripList[droneIndex][tripIndex].begin() + xIndex);
 
                         double newScore = s.getScore();
-                        //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        //Method 1:
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = std::to_string(
-                                        droneTripList[droneIndex][tripIndex][xIndex]);
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                          s.droneTripList[droneIndex][tripIndex][xIndex])))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = std::to_string(
+                                    droneTripList[droneIndex][tripIndex][xIndex]);
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                          droneTripList[droneIndex][tripIndex][xIndex])))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -924,22 +906,19 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
                                 s.droneTripList[droneIndex][tripIndex].begin() + xIndex);
 
                             newScore = s.getScore();
-                            //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            //Method 1:
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = std::to_string(
-                                        droneTripList[droneIndex][tripIndex][xIndex]);
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                            s.droneTripList[droneIndex][tripIndex][xIndex])))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = std::to_string(
+                                    droneTripList[droneIndex][tripIndex][xIndex]);
+                                curScore = newScore; 
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                            droneTripList[droneIndex][tripIndex][xIndex])))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -989,21 +968,19 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
                         s.techTripList[techIndex].begin() + xIndex);
 
                     double newScore = s.getScore();
-                    //Method 2:
-                    if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                    //Method 1:
+                    if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                         isImproved = true;
                         bestFeasibleSolution.droneTripList = s.droneTripList;
                         bestFeasibleSolution.techTripList = s.techTripList;
                         bestScore = newScore;
-                        if (newScore - curScore < config.tabuEpsilon){
-                            bestSolution->droneTripList = s.droneTripList;
-                            bestSolution->techTripList = s.techTripList;
-                            bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
-                            curScore = newScore;
-                        }
-                    }
-                    if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                        s.techTripList[techIndex][xIndex])))
+                        bestSolution->droneTripList = s.droneTripList;
+                        bestSolution->techTripList = s.techTripList;
+                        bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
+                        curScore = newScore;
+                        
+                    } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                        techTripList[techIndex][xIndex])))
                     {
                         bestSolution->droneTripList = s.droneTripList;
                         bestSolution->techTripList = s.techTripList;
@@ -1035,21 +1012,19 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
                             s.techTripList[techIndex].begin() + xIndex);
 
                         double newScore = s.getScore();
-                        //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        //Method 1:
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                            s.techTripList[techIndex][xIndex])))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                            techTripList[techIndex][xIndex])))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -1093,20 +1068,18 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
 
                         double newScore = s.getScore();
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                            s.techTripList[techIndex][xIndex])))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                            techTripList[techIndex][xIndex])))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -1140,20 +1113,17 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
 
                             double newScore = s.getScore();
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    curScore = newScore;
-                                    bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && checkTabuCondition(tabuList, std::to_string(
-                                                                                                s.techTripList[techIndex][xIndex])))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                curScore = newScore;
+                                bestSolution->ext["state"] = std::to_string(techTripList[techIndex][xIndex]);  
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && checkTabuCondition(tabuList, std::to_string(
+                                                                                                techTripList[techIndex][xIndex])))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -1180,13 +1150,16 @@ Solution *Solution::relocate(const std::vector<std::string> &tabuList, Solution 
         }
     }
 
+    if (bestSolution->getScore() < std::abs(config.tabuEpsilon)){
+        return this;
+    }
     return bestSolution;
 }
 
 Solution *Solution::exchange(const std::vector<std::string> &tabuList, Solution &bestFeasibleSolution, RouteType type)
 {
-    auto *bestSolution = new Solution(config, input, alpha1, alpha2);
     double bestScore = bestFeasibleSolution.getScore();
+    auto *bestSolution = new Solution(config, input, alpha1, alpha2);
     double curScore = std::numeric_limits<double>::max();
     double baseScore = this->getScore();
     bool isImproved = false;
@@ -1221,22 +1194,20 @@ Solution *Solution::exchange(const std::vector<std::string> &tabuList, Solution 
                                 std::string val2 = std::to_string(droneTripList[droneIndex2][tripIndex2][yIndex]);
 
                                 //Method 2:
-                                if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                                if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                     isImproved = true;
                                     bestFeasibleSolution.droneTripList = s.droneTripList;
                                     bestFeasibleSolution.techTripList = s.techTripList;
                                     bestScore = newScore;
-                                    if (newScore - curScore < config.tabuEpsilon){
-                                        bestSolution->droneTripList = s.droneTripList;
-                                        bestSolution->techTripList = s.techTripList;
-                                        bestSolution->ext["state"] = "";
-                                        bestSolution->ext["state"] += val1;
-                                        bestSolution->ext["state"] += "-";
-                                        bestSolution->ext["state"] += val2;
-                                        curScore = newScore;
-                                    }
-                                }
-                                if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                    bestSolution->droneTripList = s.droneTripList;
+                                    bestSolution->techTripList = s.techTripList;
+                                    bestSolution->ext["state"] = "";
+                                    bestSolution->ext["state"] += val1;
+                                    bestSolution->ext["state"] += "-";
+                                    bestSolution->ext["state"] += val2;
+                                    curScore = newScore;
+                                    
+                                } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                                 {
                                     bestSolution->droneTripList = s.droneTripList;
                                     bestSolution->techTripList = s.techTripList;
@@ -1281,22 +1252,20 @@ Solution *Solution::exchange(const std::vector<std::string> &tabuList, Solution 
                             std::string val1 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex]);
                             std::string val2 = std::to_string(techTripList[techIndex][yIndex]);
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = "";
-                                    bestSolution->ext["state"] += val1;
-                                    bestSolution->ext["state"] += "-";
-                                    bestSolution->ext["state"] += val2;
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = "";
+                                bestSolution->ext["state"] += val1;
+                                bestSolution->ext["state"] += "-";
+                                bestSolution->ext["state"] += val2;
+                                curScore = newScore;
+                                
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -1350,22 +1319,20 @@ Solution *Solution::exchange(const std::vector<std::string> &tabuList, Solution 
                         std::string val1 = std::to_string(techTripList[techIndex][xIndex]);
                         std::string val2 = std::to_string(techTripList[techIndex2][yIndex]);
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -1415,22 +1382,20 @@ Solution *Solution::exchange(const std::vector<std::string> &tabuList, Solution 
                             std::string val1 = std::to_string(techTripList[techIndex][xIndex]);
                             std::string val2 = std::to_string(droneTripList[droneIndex][tripIndex][yIndex]);
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = "";
-                                    bestSolution->ext["state"] += val1;
-                                    bestSolution->ext["state"] += "-";
-                                    bestSolution->ext["state"] += val2;
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = "";
+                                bestSolution->ext["state"] += val1;
+                                bestSolution->ext["state"] += "-";
+                                bestSolution->ext["state"] += val2;
+                                curScore = newScore;
+                                
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -1481,22 +1446,20 @@ Solution *Solution::exchange(const std::vector<std::string> &tabuList, Solution 
                         std::string val1 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex]);
                         std::string val2 = std::to_string(droneTripList[droneIndex][tripIndex][yIndex]);
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -1541,22 +1504,20 @@ Solution *Solution::exchange(const std::vector<std::string> &tabuList, Solution 
                     std::string val1 = std::to_string(techTripList[techIndex][xIndex]);
                     std::string val2 = std::to_string(techTripList[techIndex][yIndex]);
                     //Method 2:
-                    if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                    if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                         isImproved = true;
                         bestFeasibleSolution.droneTripList = s.droneTripList;
                         bestFeasibleSolution.techTripList = s.techTripList;
                         bestScore = newScore;
-                        if (newScore - curScore < config.tabuEpsilon){
-                            bestSolution->droneTripList = s.droneTripList;
-                            bestSolution->techTripList = s.techTripList;
-                            bestSolution->ext["state"] = "";
-                            bestSolution->ext["state"] += val1;
-                            bestSolution->ext["state"] += "-";
-                            bestSolution->ext["state"] += val2;
-                            curScore = newScore;
-                        }
-                    }
-                    if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                        bestSolution->droneTripList = s.droneTripList;
+                        bestSolution->techTripList = s.techTripList;
+                        bestSolution->ext["state"] = "";
+                        bestSolution->ext["state"] += val1;
+                        bestSolution->ext["state"] += "-";
+                        bestSolution->ext["state"] += val2;
+                        curScore = newScore;
+                        
+                    } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                     {
                         bestSolution->droneTripList = s.droneTripList;
                         bestSolution->techTripList = s.techTripList;
@@ -1586,6 +1547,9 @@ Solution *Solution::exchange(const std::vector<std::string> &tabuList, Solution 
         }
     }
 
+    if (bestSolution->getScore() < std::abs(config.tabuEpsilon)){
+        return this;
+    }
     return bestSolution;
 }
 
@@ -1696,22 +1660,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                             std::string val2 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex + dis]);
 
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = "";
-                                    bestSolution->ext["state"] += val1;
-                                    bestSolution->ext["state"] += "-";
-                                    bestSolution->ext["state"] += val2;
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = "";
+                                bestSolution->ext["state"] += val1;
+                                bestSolution->ext["state"] += "-";
+                                bestSolution->ext["state"] += val2;
+                                curScore = newScore;
+                                
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -1756,22 +1718,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                                 val2 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex + dis]);
 
                                 //Method 2:
-                                if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                                if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                     isImproved = true;
                                     bestFeasibleSolution.droneTripList = s.droneTripList;
                                     bestFeasibleSolution.techTripList = s.techTripList;
                                     bestScore = newScore;
-                                    if (newScore - curScore < config.tabuEpsilon){
-                                        bestSolution->droneTripList = s.droneTripList;
-                                        bestSolution->techTripList = s.techTripList;
-                                        bestSolution->ext["state"] = "";
-                                        bestSolution->ext["state"] += val1;
-                                        bestSolution->ext["state"] += "-";
-                                        bestSolution->ext["state"] += val2;
-                                        curScore = newScore;
-                                    }
-                                }
-                                if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                    bestSolution->droneTripList = s.droneTripList;
+                                    bestSolution->techTripList = s.techTripList;
+                                    bestSolution->ext["state"] = "";
+                                    bestSolution->ext["state"] += val1;
+                                    bestSolution->ext["state"] += "-";
+                                    bestSolution->ext["state"] += val2;
+                                    curScore = newScore;
+                                    
+                                } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                                 {
                                     bestSolution->droneTripList = s.droneTripList;
                                     bestSolution->techTripList = s.techTripList;
@@ -1821,22 +1781,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                         std::string val1 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex]);
                         std::string val2 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex + dis]);
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -1880,22 +1838,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                             val1 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex]);
                             val2 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex + dis]);
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = "";
-                                    bestSolution->ext["state"] += val1;
-                                    bestSolution->ext["state"] += "-";
-                                    bestSolution->ext["state"] += val2;
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = "";
+                                bestSolution->ext["state"] += val1;
+                                bestSolution->ext["state"] += "-";
+                                bestSolution->ext["state"] += val2;
+                                curScore = newScore;
+                                
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -1958,22 +1914,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                     std::string val1 = std::to_string(techTripList[techIndex][xIndex]);
                     std::string val2 = std::to_string(techTripList[techIndex][xIndex + dis]);
                     //Method 2:
-                    if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                    if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                         isImproved = true;
                         bestFeasibleSolution.droneTripList = s.droneTripList;
                         bestFeasibleSolution.techTripList = s.techTripList;
                         bestScore = newScore;
-                        if (newScore - curScore < config.tabuEpsilon){
-                            bestSolution->droneTripList = s.droneTripList;
-                            bestSolution->techTripList = s.techTripList;
-                            bestSolution->ext["state"] = "";
-                            bestSolution->ext["state"] += val1;
-                            bestSolution->ext["state"] += "-";
-                            bestSolution->ext["state"] += val2;
-                            curScore = newScore;
-                        }
-                    }
-                    if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                        bestSolution->droneTripList = s.droneTripList;
+                        bestSolution->techTripList = s.techTripList;
+                        bestSolution->ext["state"] = "";
+                        bestSolution->ext["state"] += val1;
+                        bestSolution->ext["state"] += "-";
+                        bestSolution->ext["state"] += val2;
+                        curScore = newScore;
+                        
+                    } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                     {
                         bestSolution->droneTripList = s.droneTripList;
                         bestSolution->techTripList = s.techTripList;
@@ -2017,22 +1971,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                         val1 = std::to_string(techTripList[techIndex][xIndex]);
                         val2 = std::to_string(techTripList[techIndex][xIndex + dis]);
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -2096,22 +2048,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                         std::string val1 = std::to_string(techTripList[techIndex][xIndex]);
                         std::string val2 = std::to_string(techTripList[techIndex][xIndex + dis]);
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -2154,22 +2104,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                             val1 = std::to_string(techTripList[techIndex][xIndex]);
                             val2 = std::to_string(techTripList[techIndex][xIndex + dis]);
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = "";
-                                    bestSolution->ext["state"] += val1;
-                                    bestSolution->ext["state"] += "-";
-                                    bestSolution->ext["state"] += val2;
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = "";
+                                bestSolution->ext["state"] += val1;
+                                bestSolution->ext["state"] += "-";
+                                bestSolution->ext["state"] += val2;
+                                curScore = newScore;
+                                
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -2231,22 +2179,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                         std::string val1 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex]);
                         std::string val2 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex + dis]);
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -2307,22 +2253,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                         std::string val1 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex]);
                         std::string val2 = std::to_string(droneTripList[droneIndex][tripIndex][xIndex + dis]);
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -2378,22 +2322,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                     std::string val1 = std::to_string(techTripList[techIndex][xIndex]);
                     std::string val2 = std::to_string(techTripList[techIndex][xIndex + dis]);
                     //Method 2:
-                    if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                    if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                         isImproved = true;
                         bestFeasibleSolution.droneTripList = s.droneTripList;
                         bestFeasibleSolution.techTripList = s.techTripList;
                         bestScore = newScore;
-                        if (newScore - curScore < config.tabuEpsilon){
-                            bestSolution->droneTripList = s.droneTripList;
-                            bestSolution->techTripList = s.techTripList;
-                            bestSolution->ext["state"] = "";
-                            bestSolution->ext["state"] += val1;
-                            bestSolution->ext["state"] += "-";
-                            bestSolution->ext["state"] += val2;
-                            curScore = newScore;
-                        }
-                    }
-                    if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                        bestSolution->droneTripList = s.droneTripList;
+                        bestSolution->techTripList = s.techTripList;
+                        bestSolution->ext["state"] = "";
+                        bestSolution->ext["state"] += val1;
+                        bestSolution->ext["state"] += "-";
+                        bestSolution->ext["state"] += val2;
+                        curScore = newScore;
+                        
+                    } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                     {
                         bestSolution->droneTripList = s.droneTripList;
                         bestSolution->techTripList = s.techTripList;
@@ -2453,22 +2395,20 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
                     std::string val1 = std::to_string(techTripList[techIndex][xIndex]);
                     std::string val2 = std::to_string(techTripList[techIndex][xIndex + dis]);
                     //Method 2:
-                    if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                    if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                         isImproved = true;
                         bestFeasibleSolution.droneTripList = s.droneTripList;
                         bestFeasibleSolution.techTripList = s.techTripList;
                         bestScore = newScore;
-                        if (newScore - curScore < config.tabuEpsilon){
-                            bestSolution->droneTripList = s.droneTripList;
-                            bestSolution->techTripList = s.techTripList;
-                            bestSolution->ext["state"] = "";
-                            bestSolution->ext["state"] += val1;
-                            bestSolution->ext["state"] += "-";
-                            bestSolution->ext["state"] += val2;
-                            curScore = newScore;
-                        }
-                    }
-                    if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                        bestSolution->droneTripList = s.droneTripList;
+                        bestSolution->techTripList = s.techTripList;
+                        bestSolution->ext["state"] = "";
+                        bestSolution->ext["state"] += val1;
+                        bestSolution->ext["state"] += "-";
+                        bestSolution->ext["state"] += val2;
+                        curScore = newScore;
+                        
+                    } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                     {
                         bestSolution->droneTripList = s.droneTripList;
                         bestSolution->techTripList = s.techTripList;
@@ -2498,6 +2438,9 @@ Solution *Solution::orOpt(const std::vector<std::string> &tabuList, Solution &be
         }
     }
 
+    if (bestSolution->getScore() < std::abs(config.tabuEpsilon)){
+        return this;
+    }
     return bestSolution;
 }
 
@@ -2570,22 +2513,21 @@ Solution *Solution::twoOpt(const std::vector<std::string> &tabuList, Solution &b
                             }
 
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            //std::cout << std::endl << (!isImproved) << " and " << (newScore) << " -- " << curScore << " and " << checkTabuCondition(tabuList, val1, val2);
+
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = "";
-                                    bestSolution->ext["state"] += val1;
-                                    bestSolution->ext["state"] += "-";
-                                    bestSolution->ext["state"] += val2;
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = "";
+                                bestSolution->ext["state"] += val1;
+                                bestSolution->ext["state"] += "-";
+                                bestSolution->ext["state"] += val2;
+                                curScore = newScore;
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -2671,22 +2613,22 @@ Solution *Solution::twoOpt(const std::vector<std::string> &tabuList, Solution &b
                                     val2 = std::to_string(droneTripList[droneIndex2][tripIndex2][yIndex]);
                                 }
                                 //Method 2:
-                                if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                                //std::cout << std::endl << (!isImproved) << " and " << (newScore) << " -- " << curScore << " and " << checkTabuCondition(tabuList, val1, val2);
+
+                                if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                     isImproved = true;
                                     bestFeasibleSolution.droneTripList = s.droneTripList;
                                     bestFeasibleSolution.techTripList = s.techTripList;
                                     bestScore = newScore;
-                                    if (newScore - curScore < config.tabuEpsilon){
-                                        bestSolution->droneTripList = s.droneTripList;
-                                        bestSolution->techTripList = s.techTripList;
-                                        bestSolution->ext["state"] = "";
-                                        bestSolution->ext["state"] += val1;
-                                        bestSolution->ext["state"] += "-";
-                                        bestSolution->ext["state"] += val2;
-                                        curScore = newScore;
-                                    }
-                                }
-                                if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                    bestSolution->droneTripList = s.droneTripList;
+                                    bestSolution->techTripList = s.techTripList;
+                                    bestSolution->ext["state"] = "";
+                                    bestSolution->ext["state"] += val1;
+                                    bestSolution->ext["state"] += "-";
+                                    bestSolution->ext["state"] += val2;
+                                    curScore = newScore;
+                                    
+                                } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                                 {
                                     bestSolution->droneTripList = s.droneTripList;
                                     bestSolution->techTripList = s.techTripList;
@@ -2790,22 +2732,20 @@ Solution *Solution::twoOpt(const std::vector<std::string> &tabuList, Solution &b
                                 val2 = std::to_string(droneTripList[droneIndex][tripIndex][yIndex]);
                             }
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = "";
-                                    bestSolution->ext["state"] += val1;
-                                    bestSolution->ext["state"] += "-";
-                                    bestSolution->ext["state"] += val2;
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = "";
+                                bestSolution->ext["state"] += val1;
+                                bestSolution->ext["state"] += "-";
+                                bestSolution->ext["state"] += val2;
+                                curScore = newScore;
+                                
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -2888,22 +2828,20 @@ Solution *Solution::twoOpt(const std::vector<std::string> &tabuList, Solution &b
                             val2 = std::to_string(techTripList[techIndex2][yIndex]);
                         }
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -3000,22 +2938,21 @@ Solution *Solution::twoOpt(const std::vector<std::string> &tabuList, Solution &b
                                     val2 = std::to_string(droneTripList[droneIndex2][tripIndex2][yIndex]);
                                 }
                                 //Method 2:
-                                if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                                //std::cout << std::endl << (!isImproved) << " and " << (newScore) << " -- " << curScore << " and " << checkTabuCondition(tabuList, val1, val2);
+                                if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                     isImproved = true;
                                     bestFeasibleSolution.droneTripList = s.droneTripList;
                                     bestFeasibleSolution.techTripList = s.techTripList;
                                     bestScore = newScore;
-                                    if (newScore - curScore < config.tabuEpsilon){
-                                        bestSolution->droneTripList = s.droneTripList;
-                                        bestSolution->techTripList = s.techTripList;
-                                        bestSolution->ext["state"] = "";
-                                        bestSolution->ext["state"] += val1;
-                                        bestSolution->ext["state"] += "-";
-                                        bestSolution->ext["state"] += val2;
-                                        curScore = newScore;
-                                    }
-                                }
-                                if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                    bestSolution->droneTripList = s.droneTripList;
+                                    bestSolution->techTripList = s.techTripList;
+                                    bestSolution->ext["state"] = "";
+                                    bestSolution->ext["state"] += val1;
+                                    bestSolution->ext["state"] += "-";
+                                    bestSolution->ext["state"] += val2;
+                                    curScore = newScore;
+                                 
+                                } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                                 {
                                     bestSolution->droneTripList = s.droneTripList;
                                     bestSolution->techTripList = s.techTripList;
@@ -3105,22 +3042,22 @@ Solution *Solution::twoOpt(const std::vector<std::string> &tabuList, Solution &b
                             val2 = std::to_string(techTripList[techIndex2][yIndex]);
                         }
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        //std::cout << std::endl << (!isImproved) << " and " << (newScore) << " -- " << curScore << " and " << checkTabuCondition(tabuList, val1, val2);
+
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -3151,6 +3088,9 @@ Solution *Solution::twoOpt(const std::vector<std::string> &tabuList, Solution &b
         }
     }
 
+    if (bestSolution->getScore() < std::abs(config.tabuEpsilon)){
+        return this;
+    }
     return bestSolution;
 }
 
@@ -3216,22 +3156,20 @@ Solution *Solution::crossExchange(const std::vector<std::string> &tabuList, Solu
                                                std::to_string(droneTripList[droneIndex][tripIndex][xIndex + dis1]);
                             std::string val2 = std::to_string(techTripList[techIndex][yIndex]) + "-" + std::to_string(techTripList[techIndex][yIndex + dis2]);
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = "";
-                                    bestSolution->ext["state"] += val1;
-                                    bestSolution->ext["state"] += "-";
-                                    bestSolution->ext["state"] += val2;
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = "";
+                                bestSolution->ext["state"] += val1;
+                                bestSolution->ext["state"] += "-";
+                                bestSolution->ext["state"] += val2;
+                                curScore = newScore;
+                                
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -3300,22 +3238,20 @@ Solution *Solution::crossExchange(const std::vector<std::string> &tabuList, Solu
                                                    std::to_string(droneTripList[droneIndex][tripIndex][xIndex + dis1]);
                                 std::string val2 = std::to_string(droneTripList[droneIndex2][tripIndex2][yIndex]) + "-" + std::to_string(droneTripList[droneIndex2][tripIndex2][yIndex + dis2]);
                                 //Method 2:
-                                if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                                if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                     isImproved = true;
                                     bestFeasibleSolution.droneTripList = s.droneTripList;
                                     bestFeasibleSolution.techTripList = s.techTripList;
                                     bestScore = newScore;
-                                    if (newScore - curScore < config.tabuEpsilon){
-                                        bestSolution->droneTripList = s.droneTripList;
-                                        bestSolution->techTripList = s.techTripList;
-                                        bestSolution->ext["state"] = "";
-                                        bestSolution->ext["state"] += val1;
-                                        bestSolution->ext["state"] += "-";
-                                        bestSolution->ext["state"] += val2;
-                                        curScore = newScore;
-                                    }
-                                }
-                                if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                    bestSolution->droneTripList = s.droneTripList;
+                                    bestSolution->techTripList = s.techTripList;
+                                    bestSolution->ext["state"] = "";
+                                    bestSolution->ext["state"] += val1;
+                                    bestSolution->ext["state"] += "-";
+                                    bestSolution->ext["state"] += val2;
+                                    curScore = newScore;
+                                    
+                                } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                                 {
                                     bestSolution->droneTripList = s.droneTripList;
                                     bestSolution->techTripList = s.techTripList;
@@ -3399,22 +3335,20 @@ Solution *Solution::crossExchange(const std::vector<std::string> &tabuList, Solu
                             std::string val2 = std::to_string(droneTripList[droneIndex][tripIndex][yIndex]) + "-" +
                                                std::to_string(droneTripList[droneIndex][tripIndex][yIndex + dis2]);
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = "";
-                                    bestSolution->ext["state"] += val1;
-                                    bestSolution->ext["state"] += "-";
-                                    bestSolution->ext["state"] += val2;
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = "";
+                                bestSolution->ext["state"] += val1;
+                                bestSolution->ext["state"] += "-";
+                                bestSolution->ext["state"] += val2;
+                                curScore = newScore;
+                                
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -3477,22 +3411,21 @@ Solution *Solution::crossExchange(const std::vector<std::string> &tabuList, Solu
                         std::string val2 = std::to_string(techTripList[techIndex2][yIndex]) + "-" +
                                            std::to_string(techTripList[techIndex2][yIndex + dis2]);
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
                         }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                        if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -3590,22 +3523,20 @@ Solution *Solution::crossExchange(const std::vector<std::string> &tabuList, Solu
                             std::string val2 = std::to_string(droneTripList[droneIndex][tripIndex][yIndex]) + "-" +
                                                std::to_string(droneTripList[droneIndex][tripIndex][yIndex + dis2]);
                             //Method 2:
-                            if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                                 isImproved = true;
                                 bestFeasibleSolution.droneTripList = s.droneTripList;
                                 bestFeasibleSolution.techTripList = s.techTripList;
                                 bestScore = newScore;
-                                if (newScore - curScore < config.tabuEpsilon){
-                                    bestSolution->droneTripList = s.droneTripList;
-                                    bestSolution->techTripList = s.techTripList;
-                                    bestSolution->ext["state"] = "";
-                                    bestSolution->ext["state"] += val1;
-                                    bestSolution->ext["state"] += "-";
-                                    bestSolution->ext["state"] += val2;
-                                    curScore = newScore;
-                                }
-                            }
-                            if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                                bestSolution->droneTripList = s.droneTripList;
+                                bestSolution->techTripList = s.techTripList;
+                                bestSolution->ext["state"] = "";
+                                bestSolution->ext["state"] += val1;
+                                bestSolution->ext["state"] += "-";
+                                bestSolution->ext["state"] += val2;
+                                curScore = newScore;
+                                
+                            } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                             {
                                 bestSolution->droneTripList = s.droneTripList;
                                 bestSolution->techTripList = s.techTripList;
@@ -3698,22 +3629,20 @@ Solution *Solution::crossExchange(const std::vector<std::string> &tabuList, Solu
                         std::string val2 = std::to_string(techTripList[techIndex][yIndex]) + "-" +
                                            std::to_string(techTripList[techIndex][yIndex + dis2]);
                         //Method 2:
-                        if (s.check_feasible() && newScore - bestScore < config.tabuEpsilon){
+                        if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
                             isImproved = true;
                             bestFeasibleSolution.droneTripList = s.droneTripList;
                             bestFeasibleSolution.techTripList = s.techTripList;
                             bestScore = newScore;
-                            if (newScore - curScore < config.tabuEpsilon){
-                                bestSolution->droneTripList = s.droneTripList;
-                                bestSolution->techTripList = s.techTripList;
-                                bestSolution->ext["state"] = "";
-                                bestSolution->ext["state"] += val1;
-                                bestSolution->ext["state"] += "-";
-                                bestSolution->ext["state"] += val2;
-                                curScore = newScore;
-                            }
-                        }
-                        if (newScore - curScore < config.tabuEpsilon && (checkTabuCondition(tabuList, val1, val2)))
+                            bestSolution->droneTripList = s.droneTripList;
+                            bestSolution->techTripList = s.techTripList;
+                            bestSolution->ext["state"] = "";
+                            bestSolution->ext["state"] += val1;
+                            bestSolution->ext["state"] += "-";
+                            bestSolution->ext["state"] += val2;
+                            curScore = newScore;
+                            
+                        } else if (!isImproved && (newScore - curScore < config.tabuEpsilon) && (checkTabuCondition(tabuList, val1, val2)))
                         {
                             bestSolution->droneTripList = s.droneTripList;
                             bestSolution->techTripList = s.techTripList;
@@ -3744,69 +3673,86 @@ Solution *Solution::crossExchange(const std::vector<std::string> &tabuList, Solu
         }
     }
 
-    return bestSolution;
+    if (bestSolution->getScore() < std::abs(config.tabuEpsilon)){
+        return this;
+    }
+    return bestSolution;  
 }
 
-std::string Solution::toString()
-{
-    json jDrone(droneTripList);
-    json jTech(techTripList);
-    return jDrone.dump() + "::" + jTech.dump();
-}
 
-Solution Solution::ejection()
-{
-    Solution s = *this;
-
-    double bestGain = 0;
+Solution *Solution::ejectionNeighborhoodAdd(Solution &bestFeasibleSolution){
+    auto *bestSolution = new Solution(config, input, alpha1, alpha2);
+    double bestScore = bestFeasibleSolution.getScore();
+    double curScore = std::numeric_limits<double>::max();
     std::vector<std::pair<std::vector<int>, std::vector<int>>> bestShiftSequence;
+    std::vector<std::pair<std::vector<int>, std::vector<int>>> shiftSequence;
+    bool isImproved = false;
+    bool isImproved2 = false;
+    Solution s = *this;
+    double bestGain = 0;
     double currentGain = 0;
     int currentLevel = 0;
-    std::vector<std::pair<std::vector<int>, std::vector<int>>> shiftSequence;
-
-    for (int droneIndex = 0; droneIndex < s.droneTripList.size(); droneIndex++)
+    std::vector<int> customerX;
+    for (int droneIndex = 0; droneIndex < droneTripList.size(); droneIndex++)
     {
-        for (int tripIndex = 0; tripIndex < s.droneTripList[droneIndex].size(); tripIndex++)
+        for (int tripIndex = 0; tripIndex < droneTripList[droneIndex].size(); tripIndex++)
         {
-            for (int xIndex = 0; xIndex < s.droneTripList[droneIndex][tripIndex].size(); xIndex++)
+            for (int xIndex = 0; xIndex < droneTripList[droneIndex][tripIndex].size(); xIndex++)
             {
                 ejection(s,
                          {droneIndex, tripIndex, xIndex},
                          DRONE,
+                         customerX,
                          currentGain,
                          bestGain,
                          currentLevel,
                          shiftSequence,
                          bestShiftSequence);
+                double newScore = s.getScore();
+                if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
+                    bestFeasibleSolution.droneTripList = s.droneTripList;
+                    bestFeasibleSolution.techTripList = s.techTripList;
+                    bestScore = newScore;
+                }
             }
         }
     }
 
-    for (int techIndex = 0; techIndex < s.techTripList.size(); techIndex++)
+    for (int techIndex = 0; techIndex < techTripList.size(); techIndex++)
     {
-        for (int xIndex = 0; xIndex < s.techTripList[techIndex].size(); xIndex++)
+        for (int xIndex = 0; xIndex < techTripList[techIndex].size(); xIndex++)
         {
             ejection(s,
                      {techIndex, xIndex},
                      TECHNICIAN,
+                     customerX,
                      currentGain,
                      bestGain,
                      currentLevel,
                      shiftSequence,
                      bestShiftSequence);
+            double newScore = s.getScore();
+            if (s.check_feasible() && (newScore - bestScore < config.tabuEpsilon)){
+                bestFeasibleSolution.droneTripList = s.droneTripList;
+                bestFeasibleSolution.techTripList = s.techTripList;
+                bestScore = newScore;
+            }
         }
     }
+
 
     for (std::pair<std::vector<int>, std::vector<int>> move : bestShiftSequence)
     {
         int x;
         if (move.first.size() == 2)
         {
+            // delete x in Tech
             x = s.techTripList[move.first[0]][move.first[1]];
             s.techTripList[move.first[0]].erase(s.techTripList[move.first[0]].begin() + move.first[1]);
         }
         else
         {
+            // delete x in Drone
             x = s.droneTripList[move.first[0]][move.first[1]][move.first[2]];
             s.droneTripList[move.first[0]][move.first[1]].erase(
                 s.droneTripList[move.first[0]][move.first[1]].begin() + move.first[2]);
@@ -3814,16 +3760,36 @@ Solution Solution::ejection()
 
         if (move.second.size() == 2)
         {
+            // insert x in Tech
             s.techTripList[move.second[0]].insert(s.techTripList[move.second[0]].begin() + move.second[1], x);
         }
         else
         {
+            // insert x in Drone
             s.droneTripList[move.second[0]][move.second[1]].insert(
                 s.droneTripList[move.second[0]][move.second[1]].begin() + move.second[2], x);
         }
     }
+
+    if ((bestSolution->getScore() - bestScore < config.tabuEpsilon) and (bestSolution->check_feasible())){
+        bestFeasibleSolution.droneTripList = s.droneTripList;
+        bestFeasibleSolution.techTripList = s.techTripList;
+    }
+    bestSolution->droneTripList = bestFeasibleSolution.droneTripList;
+    bestSolution->techTripList = bestFeasibleSolution.techTripList;
     //    std::cout<< "-gain:" << bestGain<<std::endl;
-    return s;
+    if (bestSolution->getScore() < std::abs(config.tabuEpsilon)){
+        return this;
+    }
+    return bestSolution;  
+}
+
+
+std::string Solution::toString()
+{
+    json jDrone(droneTripList);
+    json jTech(techTripList);
+    return jDrone.dump() + "::" + jTech.dump();
 }
 
 std::vector<double> Solution::getScoreATrip(int tripIndex, TripType type)
@@ -3916,11 +3882,13 @@ std::vector<double> Solution::getScoreATrip(int tripIndex, TripType type)
     return {ct, dzt, czt};
 }
 
-void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType type, double gain, double &bestGain,
+void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType type, std::vector<int> &customerX, double gain, double &bestGain,
                         int &level,
                         std::vector<std::pair<std::vector<int>, std::vector<int>>> &shiftSequence,
                         std::vector<std::pair<std::vector<int>, std::vector<int>>> &bestShiftSequence)
 {
+    if (level >= config.maxEjectionLevel) {return;}
+    Solution bestSol = solution;
     std::vector<double> droneScores;
     double maxDroneScore = 0;
     droneScores.reserve(solution.droneTripList.size());
@@ -3960,7 +3928,6 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
     {
         return;
     }
-
     if (maxDroneScore > maxTechScore && type == TECHNICIAN)
     {
         return;
@@ -3973,11 +3940,11 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
 
     int x, predecessor, successor;
     std::vector<std::vector<double>> times;
-
     if (type == DRONE)
     {
         times = input.droneTimes;
         x = solution.droneTripList[xIndex[0]][xIndex[1]][xIndex[2]];
+        customerX.push_back(x);
         predecessor = (xIndex[2] == 0) ? 0 : solution.droneTripList[xIndex[0]][xIndex[1]][xIndex[2] - 1];
         successor = (xIndex[2] == solution.droneTripList[xIndex[0]][xIndex[1]].size() - 1)
                         ? input.numCus + 1
@@ -4019,6 +3986,8 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                         {
                             bestShiftSequence = shiftSequence;
                             bestGain = gain;
+                            bestSol.droneTripList = solution.droneTripList;
+                            bestSol.techTripList = solution.techTripList;
                         }
                         else if (level + 1 <= config.maxEjectionLevel)
                         {
@@ -4034,6 +4003,7 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                                 {
                                     ejection(solution, {droneIndex, tripIndex, yIndex},
                                              DRONE,
+                                             customerX,
                                              gain,
                                              bestGain,
                                              level,
@@ -4042,9 +4012,41 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                                 }
                             }
                         }
+                        bool flag = false;
+                        for (int xx = 0; xx < solution.droneTripList.size(); xx++){
+                            if (flag == true){
+                                break;
+                            }
+                            for (int yy = 0; yy < solution.droneTripList[xx].size(); yy++){
+                                if (flag == true){
+                                    break;
+                                }
+                                for (auto it = solution.droneTripList[xx][yy].begin(); it != solution.droneTripList[xx][yy].end(); ) {
+                                    if (*it == x) {
+                                        flag = true;
+                                        it = solution.droneTripList[xx][yy].erase(it);  
+                                        break;
+                                    } else {
+                                        ++it;
+                                    }
+                                }
+                            }
+                        }
+                        for (int xx = 0; xx < solution.techTripList.size(); xx++){
+                            if (flag == true){
+                                break;
+                            }
+                            for (auto it = solution.techTripList[xx].begin(); it != solution.techTripList[xx].end(); ) {
+                                if (*it == x) {
+                                    flag = true;
+                                    it = solution.techTripList[xx].erase(it);  
+                                    break;
+                                } else {
+                                    ++it;
+                                }
+                            }
+                        }
 
-                        solution.droneTripList[droneIndex][tripIndex].erase(
-                            solution.droneTripList[droneIndex][tripIndex].begin() + cusIndex);
                         gain += d;
                         shiftSequence.pop_back();
                         level--;
@@ -4083,6 +4085,7 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                                     {
                                         ejection(solution, {droneIndex, tripIndex, yIndex},
                                                  DRONE,
+                                                 customerX,
                                                  gain,
                                                  bestGain,
                                                  level,
@@ -4091,9 +4094,41 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                                     }
                                 }
                             }
+                            bool flag = false;
+                            for (int xx = 0; xx < solution.droneTripList.size(); xx++){
+                                if (flag == true){
+                                    break;
+                                }
+                                for (int yy = 0; yy < solution.droneTripList[xx].size(); yy++){
+                                    if (flag == true){
+                                        break;
+                                    }
+                                    for (auto it = solution.droneTripList[xx][yy].begin(); it != solution.droneTripList[xx][yy].end(); ) {
+                                        if (*it == x) {
+                                            flag = true;
+                                            it = solution.droneTripList[xx][yy].erase(it);  
+                                            break;
+                                        } else {
+                                            ++it;
+                                        }
+                                    }
+                                }
+                            }
+                            for (int xx = 0; xx < solution.techTripList.size(); xx++){
+                                if (flag == true){
+                                    break;
+                                }
+                                for (auto it = solution.techTripList[xx].begin(); it != solution.techTripList[xx].end(); ) {
+                                    if (*it == x) {
+                                        flag = true;
+                                        it = solution.techTripList[xx].erase(it);  
+                                        break;
+                                    } else {
+                                        ++it;
+                                    }
+                                }
+                            }
 
-                            solution.droneTripList[droneIndex][tripIndex].erase(
-                                solution.droneTripList[droneIndex][tripIndex].begin() + cusIndex);
                             gain += d;
                             shiftSequence.pop_back();
                             level--;
@@ -4140,6 +4175,7 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                             {
                                 ejection(solution, {techIndex, yIndex},
                                          TECHNICIAN,
+                                         customerX,
                                          gain,
                                          bestGain,
                                          level,
@@ -4148,9 +4184,40 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                             }
                         }
                     }
-
-                    solution.techTripList[techIndex].erase(
-                        solution.techTripList[techIndex].begin() + cusIndex);
+                    bool flag = false;
+                    for (int xx = 0; xx < solution.droneTripList.size(); xx++){
+                        if (flag == true){
+                            break;
+                        }
+                        for (int yy = 0; yy < solution.droneTripList[xx].size(); yy++){
+                            if (flag == true){
+                                break;
+                            }
+                            for (auto it = solution.droneTripList[xx][yy].begin(); it != solution.droneTripList[xx][yy].end(); ) {
+                                if (*it == x) {
+                                    flag = true;
+                                    it = solution.droneTripList[xx][yy].erase(it);  
+                                    break;
+                                } else {
+                                    ++it;
+                                }
+                            }
+                        }
+                    }
+                    for (int xx = 0; xx < solution.techTripList.size(); xx++){
+                        if (flag == true){
+                            break;
+                        }
+                        for (auto it = solution.techTripList[xx].begin(); it != solution.techTripList[xx].end(); ) {
+                            if (*it == x) {
+                                flag = true;
+                                it = solution.techTripList[xx].erase(it);  
+                                break;
+                            } else {
+                                ++it;
+                            }
+                        }
+                    }
                     gain += d;
                     shiftSequence.pop_back();
                     level--;
@@ -4189,6 +4256,7 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                                 {
                                     ejection(solution, {techIndex, yIndex},
                                              TECHNICIAN,
+                                             customerX,
                                              gain,
                                              bestGain,
                                              level,
@@ -4198,8 +4266,40 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                             }
                         }
 
-                        solution.techTripList[techIndex].erase(
-                            solution.techTripList[techIndex].begin() + cusIndex);
+                        bool flag = false;
+                        for (int xx = 0; xx < solution.droneTripList.size(); xx++){
+                            if (flag == true){
+                                break;
+                            }
+                            for (int yy = 0; yy < solution.droneTripList[xx].size(); yy++){
+                                if (flag == true){
+                                    break;
+                                }
+                                for (auto it = solution.droneTripList[xx][yy].begin(); it != solution.droneTripList[xx][yy].end(); ) {
+                                    if (*it == x) {
+                                        flag = true;
+                                        it = solution.droneTripList[xx][yy].erase(it);  
+                                        break;
+                                    } else {
+                                        ++it;
+                                    }
+                                }
+                            }
+                        }
+                        for (int xx = 0; xx < solution.techTripList.size(); xx++){
+                            if (flag == true){
+                                break;
+                            }
+                            for (auto it = solution.techTripList[xx].begin(); it != solution.techTripList[xx].end(); ) {
+                                if (*it == x) {
+                                    flag = true;
+                                    it = solution.techTripList[xx].erase(it);  
+                                    break;
+                                } else {
+                                    ++it;
+                                }
+                            }
+                        }
                         gain += d;
                         shiftSequence.pop_back();
                         level--;
@@ -4215,6 +4315,7 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
     {
         times = input.techTimes;
         x = solution.techTripList[xIndex[0]][xIndex[1]];
+        customerX.push_back(x);
         predecessor = (xIndex[1] == 0) ? 0 : solution.techTripList[xIndex[0]][xIndex[1] - 1];
         successor = (xIndex[1] == solution.techTripList[xIndex[0]].size() - 1)
                         ? input.numCus + 1
@@ -4266,6 +4367,7 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                                 {
                                     ejection(solution, {droneIndex, tripIndex, yIndex},
                                              DRONE,
+                                             customerX,
                                              gain,
                                              bestGain,
                                              level,
@@ -4275,8 +4377,40 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                             }
                         }
 
-                        solution.droneTripList[droneIndex][tripIndex].erase(
-                            solution.droneTripList[droneIndex][tripIndex].begin() + cusIndex);
+                        bool flag = false;
+                        for (int xx = 0; xx < solution.droneTripList.size(); xx++){
+                            if (flag == true){
+                                break;
+                            }
+                            for (int yy = 0; yy < solution.droneTripList[xx].size(); yy++){
+                                if (flag == true){
+                                    break;
+                                }
+                                for (auto it = solution.droneTripList[xx][yy].begin(); it != solution.droneTripList[xx][yy].end(); ) {
+                                    if (*it == x) {
+                                        flag = true;
+                                        it = solution.droneTripList[xx][yy].erase(it);  
+                                        break;
+                                    } else {
+                                        ++it;
+                                    }
+                                }
+                            }
+                        }
+                        for (int xx = 0; xx < solution.techTripList.size(); xx++){
+                            if (flag == true){
+                                break;
+                            }
+                            for (auto it = solution.techTripList[xx].begin(); it != solution.techTripList[xx].end(); ) {
+                                if (*it == x) {
+                                    flag = true;
+                                    it = solution.techTripList[xx].erase(it);  
+                                    break;
+                                } else {
+                                    ++it;
+                                }
+                            }
+                        }
                         gain += d;
                         shiftSequence.pop_back();
                         level--;
@@ -4315,6 +4449,7 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                                     {
                                         ejection(solution, {droneIndex, tripIndex, yIndex},
                                                  DRONE,
+                                                 customerX,
                                                  gain,
                                                  bestGain,
                                                  level,
@@ -4324,8 +4459,40 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                                 }
                             }
 
-                            solution.droneTripList[droneIndex][tripIndex].erase(
-                                solution.droneTripList[droneIndex][tripIndex].begin() + cusIndex);
+                            bool flag = false;
+                            for (int xx = 0; xx < solution.droneTripList.size(); xx++){
+                                if (flag == true){
+                                    break;
+                                }
+                                for (int yy = 0; yy < solution.droneTripList[xx].size(); yy++){
+                                    if (flag == true){
+                                        break;
+                                    }
+                                    for (auto it = solution.droneTripList[xx][yy].begin(); it != solution.droneTripList[xx][yy].end(); ) {
+                                        if (*it == x) {
+                                            flag = true;
+                                            it = solution.droneTripList[xx][yy].erase(it);  
+                                            break;
+                                        } else {
+                                            ++it;
+                                        }
+                                    }
+                                }
+                            }
+                            for (int xx = 0; xx < solution.techTripList.size(); xx++){
+                                if (flag == true){
+                                    break;
+                                }
+                                for (auto it = solution.techTripList[xx].begin(); it != solution.techTripList[xx].end(); ) {
+                                    if (*it == x) {
+                                        flag = true;
+                                        it = solution.techTripList[xx].erase(it);  
+                                        break;
+                                    } else {
+                                        ++it;
+                                    }
+                                }
+                            }
                             gain += d;
                             shiftSequence.pop_back();
                             level--;
@@ -4376,6 +4543,7 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                             {
                                 ejection(solution, {techIndex, yIndex},
                                          TECHNICIAN,
+                                         customerX,
                                          gain,
                                          bestGain,
                                          level,
@@ -4385,8 +4553,40 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                         }
                     }
 
-                    solution.techTripList[techIndex].erase(
-                        solution.techTripList[techIndex].begin() + cusIndex);
+                    bool flag = false;
+                    for (int xx = 0; xx < solution.droneTripList.size(); xx++){
+                        if (flag == true){
+                            break;
+                        }
+                        for (int yy = 0; yy < solution.droneTripList[xx].size(); yy++){
+                            if (flag == true){
+                                break;
+                            }
+                            for (auto it = solution.droneTripList[xx][yy].begin(); it != solution.droneTripList[xx][yy].end(); ) {
+                                if (*it == x) {
+                                    flag = true;
+                                    it = solution.droneTripList[xx][yy].erase(it);  
+                                    break;
+                                } else {
+                                    ++it;
+                                }
+                            }
+                        }
+                    }
+                    for (int xx = 0; xx < solution.techTripList.size(); xx++){
+                        if (flag == true){
+                            break;
+                        }
+                        for (auto it = solution.techTripList[xx].begin(); it != solution.techTripList[xx].end(); ) {
+                            if (*it == x) {
+                                flag = true;
+                                it = solution.techTripList[xx].erase(it);  
+                                break;
+                            } else {
+                                ++it;
+                            }
+                        }
+                    }
                     gain += d;
                     shiftSequence.pop_back();
                     level--;
@@ -4425,6 +4625,7 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                                 {
                                     ejection(solution, {techIndex, yIndex},
                                              TECHNICIAN,
+                                             customerX,
                                              gain,
                                              bestGain,
                                              level,
@@ -4434,8 +4635,40 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
                             }
                         }
 
-                        solution.techTripList[techIndex].erase(
-                            solution.techTripList[techIndex].begin() + cusIndex);
+                        bool flag = false;
+                        for (int xx = 0; xx < solution.droneTripList.size(); xx++){
+                            if (flag == true){
+                                break;
+                            }
+                            for (int yy = 0; yy < solution.droneTripList[xx].size(); yy++){
+                                if (flag == true){
+                                    break;
+                                }
+                                for (auto it = solution.droneTripList[xx][yy].begin(); it != solution.droneTripList[xx][yy].end(); ) {
+                                    if (*it == x) {
+                                        flag = true;
+                                        it = solution.droneTripList[xx][yy].erase(it);  
+                                        break;
+                                    } else {
+                                        ++it;
+                                    }
+                                }
+                            }
+                        }
+                        for (int xx = 0; xx < solution.techTripList.size(); xx++){
+                            if (flag == true){
+                                break;
+                            }
+                            for (auto it = solution.techTripList[xx].begin(); it != solution.techTripList[xx].end(); ) {
+                                if (*it == x) {
+                                    flag = true;
+                                    it = solution.techTripList[xx].erase(it);  
+                                    break;
+                                } else {
+                                    ++it;
+                                }
+                            }
+                        }
                         gain += d;
                         shiftSequence.pop_back();
                         level--;
@@ -4448,6 +4681,7 @@ void Solution::ejection(Solution &solution, std::vector<int> xIndex, TripType ty
             solution.techTripList[xIndex[0]].begin() + xIndex[1], x);
     }
 }
+
 
 void Solution::perturbation()
 {
@@ -4745,4 +4979,3 @@ bool Solution::check_feasible()
     }
     return true;
 }
-

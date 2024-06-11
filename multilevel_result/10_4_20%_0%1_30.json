@@ -1,0 +1,158 @@
+{
+    "10.10.1 | Average: ": 18.09346866445267,
+    "10.10.1 | Best: ": 18.09346866445267,
+    "10.10.1 | STD: ": 0.0,
+    "10.10.1.txt": {
+        "10.10.1.txt.1": {
+            "Best Score: ": 18.09346866445267,
+            "Best Solution: ": "18.093469 == [[[6,10,9]],[[7,3,8]]] || [[1,4,5],[2]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.486,
+            "Score List: ": "Level 0: 22.239228 | Level 1: -0.186417 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.10.2 | Average: ": 17.901555346887605,
+    "10.10.2 | Best: ": 17.901555346887605,
+    "10.10.2 | STD: ": 0.0,
+    "10.10.2.txt": {
+        "10.10.2.txt.1": {
+            "Best Score: ": 17.901555346887605,
+            "Best Solution: ": "17.901555 == [[[10,2,1,3,4]],[[5,7]]] || [[6,9],[8]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.482,
+            "Score List: ": "Level 0: 26.582580 | Level 1: -0.295845 | Level 2: -0.043631 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.10.3 | Average: ": 19.713438491688663,
+    "10.10.3 | Best: ": 19.713438491688663,
+    "10.10.3 | STD: ": 0.0,
+    "10.10.3.txt": {
+        "10.10.3.txt.1": {
+            "Best Score: ": 19.713438491688663,
+            "Best Solution: ": "19.713438 == [[[7,2,4,9,5]],[[6]]] || [[1,8],[10,3]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.471,
+            "Score List: ": "Level 0: 30.249156 | Level 1: -0.348298 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.10.4 | Average: ": 15.926132516673796,
+    "10.10.4 | Best: ": 15.926132516673796,
+    "10.10.4 | STD: ": 0.0,
+    "10.10.4.txt": {
+        "10.10.4.txt.1": {
+            "Best Score: ": 15.926132516673796,
+            "Best Solution: ": "15.926133 == [[[9,3]],[[10,2,5,4]]] || [[7,1],[8,6]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.524,
+            "Score List: ": "Level 0: 26.418521 | Level 1: -0.397160 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.20.1 | Average: ": 32.591088557339724,
+    "10.20.1 | Best: ": 32.591088557339724,
+    "10.20.1 | STD: ": 0.0,
+    "10.20.1.txt": {
+        "10.20.1.txt.1": {
+            "Best Score: ": 32.591088557339724,
+            "Best Solution: ": "32.591089 == [[[1,5,7]],[[4,6,3,8]]] || [[2,9],[10]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.463,
+            "Score List: ": "Level 0: 45.214963 | Level 1: -0.279197 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.20.2 | Average: ": 34.687276117508475,
+    "10.20.2 | Best: ": 34.687276117508475,
+    "10.20.2 | STD: ": 0.0,
+    "10.20.2.txt": {
+        "10.20.2.txt.1": {
+            "Best Score: ": 34.687276117508475,
+            "Best Solution: ": "34.687276 == [[[5,6,4]],[[1,3,7]]] || [[9,2,10],[8]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.46,
+            "Score List: ": "Level 0: 46.495446 | Level 1: -0.253964 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: -0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.20.3 | Average: ": 34.45319043691563,
+    "10.20.3 | Best: ": 34.45319043691563,
+    "10.20.3 | STD: ": 0.0,
+    "10.20.3.txt": {
+        "10.20.3.txt.1": {
+            "Best Score: ": 34.45319043691563,
+            "Best Solution: ": "34.453190 == [[[9,3,7]],[[6,1,8]]] || [[4,10],[5,2]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.456,
+            "Score List: ": "Level 0: 54.507510 | Level 1: -0.367918 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.20.4 | Average: ": 35.68932354111509,
+    "10.20.4 | Best: ": 35.68932354111509,
+    "10.20.4 | STD: ": 0.0,
+    "10.20.4.txt": {
+        "10.20.4.txt.1": {
+            "Best Score: ": 35.68932354111509,
+            "Best Solution: ": "35.689324 == [[[5,9]],[[7,8,10,4]]] || [[6,3],[1,2]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.512,
+            "Score List: ": "Level 0: 47.091903 | Level 1: -0.242135 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.5.1 | Average: ": 9.06053583382187,
+    "10.5.1 | Best: ": 9.06053583382187,
+    "10.5.1 | STD: ": 0.0,
+    "10.5.1.txt": {
+        "10.5.1.txt.1": {
+            "Best Score: ": 9.06053583382187,
+            "Best Solution: ": "9.060536 == [[[1,10,2]],[[6,4,5,9]]] || [[3],[7,8]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.439,
+            "Score List: ": "Level 0: 13.061695 | Level 1: -0.290667 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: -0.022079 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.5.2 | Average: ": 8.947312497903512,
+    "10.5.2 | Best: ": 8.947312497903512,
+    "10.5.2 | STD: ": 0.0,
+    "10.5.2.txt": {
+        "10.5.2.txt.1": {
+            "Best Score: ": 8.947312497903512,
+            "Best Solution: ": "8.947312 == [[[10,2,8,9]],[[6,7]]] || [[4,1],[3,5]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.448,
+            "Score List: ": "Level 0: 11.644100 | Level 1: -0.231601 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.5.3 | Average: ": 9.31131328912193,
+    "10.5.3 | Best: ": 9.31131328912193,
+    "10.5.3 | STD: ": 0.0,
+    "10.5.3.txt": {
+        "10.5.3.txt.1": {
+            "Best Score: ": 9.31131328912193,
+            "Best Solution: ": "9.311313 == [[[4,1,10,9]],[[5,7,8]]] || [[3,2],[6]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.423,
+            "Score List: ": "Level 0: 15.191882 | Level 1: -0.387086 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    },
+    "10.5.4 | Average: ": 9.856472371300761,
+    "10.5.4 | Best: ": 9.856472371300761,
+    "10.5.4 | STD: ": 0.0,
+    "10.5.4.txt": {
+        "10.5.4.txt.1": {
+            "Best Score: ": 9.856472371300761,
+            "Best Solution: ": "9.856472 == [[[2,9,7,10]],[[5,8]]] || [[6,4,1],[3]]",
+            "Num_Drone: ": 2,
+            "Num_Tech: ": 2,
+            "Run Time: ": 0.441,
+            "Score List: ": "Level 0: 14.120654 | Level 1: -0.301982 | Level 2: 0.000000 | Level 3: 0.000000 | Level 4: 0.000000 | Post Optimization: 0.000000 | Level 2: 0.000000 | Level 1: 0.000000 | Level 0: 0.000000 | Post Optimization: 0.000000 | "
+        }
+    }
+}

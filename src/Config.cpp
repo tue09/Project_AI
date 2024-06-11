@@ -11,12 +11,13 @@ Config::Config()
     tabuBeta = 0.5;
     tabuEpsilon = 1e-3;
     maxEjectionLevel = 2;
-
+    addEjectionType = 1;
+    overwrite = true;
+    run_type = 1;
 
     tabu_size = 5;
     num_level = 3;
     percent_match = 0.2;
-    tabu_max_ite = 40;
 
 
     droneVelocity = 0.83;
@@ -26,6 +27,9 @@ Config::Config()
     droneLimitationFlightTime = 120;
     sampleLimitationWaitingTime = 60;
     isCycle = 1;
+    ejectionIte = 1;
+    tabuMaxIter = 100;
+    tabuDuration = 5;
 
 
     use_ejection = true;

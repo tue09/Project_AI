@@ -34,7 +34,9 @@ enum NeighborhoodType
     MOVE_11 = 2,
     MOVE_20 = 3,
     MOVE_21 = 4,
-    TWO_OPT = 5
+    TWO_OPT = 5,
+    EJECTION = 6,
+    EJECTION2 = 7
 };
 
 enum InterRouteType
@@ -94,11 +96,17 @@ public:
     Solution *twoOpt(const std::vector<std::string> &tabuList,  Solution &bestFeasibleSolution,
                      RouteType type = ALL);
 
+
+    Solution *ejectionNeighborhoodAdd(Solution &bestFeasibleSolution);
+
+
     Solution ejection();
 
-    void ejection(Solution &solution, std::vector<int> xIndex, TripType type, double gain, double &bestGain, int &level,
+    
+    void ejection(Solution &solution, std::vector<int> xIndex, TripType type, std::vector<int> &customerX, double gain, double &bestGain, int &level,
                   std::vector<std::pair<std::vector<int>, std::vector<int>>> &shiftSequence,
                   std::vector<std::pair<std::vector<int>, std::vector<int>>> &bestShiftSequence);
+
 
     void perturbation();
 

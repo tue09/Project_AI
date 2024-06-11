@@ -20,7 +20,14 @@ std::tuple<double, Solution, std::vector<std::vector<int>>> TabuSearch::run(json
 {
     setConfigandInput(config, input);
     solution.setInput(input);
+    for (int i = 0; i < solution.droneTripList.size(); i++){
+        if (solution.droneTripList[i].size() == 0){
+            solution.droneTripList[i].push_back({});
+        }
+    }
 
+    //alpha1 = 0;
+    //alpha2 = 0;
     json feasible;
     std::vector<std::vector<int>> matrix;
     matrix.resize(input.numCus + 1);
@@ -34,6 +41,7 @@ std::tuple<double, Solution, std::vector<std::vector<int>>> TabuSearch::run(json
     tabuLists[MOVE_20] = std::vector<std::string>();
     tabuLists[MOVE_21] = std::vector<std::string>();
     tabuLists[TWO_OPT] = std::vector<std::string>();
+
     Solution bestFeasibleSolution;
     bestFeasibleSolution.setInput(input);
     bestSolution.setInput(input);
@@ -62,10 +70,23 @@ std::tuple<double, Solution, std::vector<std::vector<int>>> TabuSearch::run(json
     int notFeasibleImprove = 0;
     auto start = high_resolution_clock::now();
     int actOrderCycle = -1;
+    //config.isCycle = false;
     for (int it = 0; it < config.tabuMaxIter; it++)
     {
+        /*if (it % 5 == 0){
+            //std::cout << std::endl << "False";
+            std::random_device rd;
+            std::mt19937 mt(rd());
+            std::shuffle(input.neighborhoodOrders.begin(), input.neighborhoodOrders.end(), mt);
+        }*/
+        //std::cout << std::endl << "Is Feasible ?? = " << currentSolution.check_feasible();
+        //std::cout<<std::endl<<"Ite "<<it<<" | Score = "<<bestFeasibleSolution.getScore() << " || " << "Current Score = " << currentScore;
+        //std::cout << std::endl << "alpha1 = " << alpha1 << " || " << "alpha2 = " << alpha2;
+        //std::cout << std::endl << "cz = " << currentSolution.cz << " || " << "dz = " << currentSolution.dz;
+
         json jDrone(currentSolution.droneTripList);
         json jTech(currentSolution.techTripList);
+
         actOrderCycle = (actOrderCycle + 1) % 5;
         if (config.isCycle)
         {
@@ -75,7 +96,10 @@ std::tuple<double, Solution, std::vector<std::vector<int>>> TabuSearch::run(json
         {
             actOrd = Random::get(1, 5);
         }
-        actOrd = Random::get(1, 5);
+        //actOrd = input.neighborhoodOrders[actOrd - 1];
+        //std::cout << std::endl << "actOrd = " << actOrd;
+        Solution bestFeasibleBefore = bestFeasibleSolution;
+        //actOrd = Random::get(1, 5);
         //std::cout<<std::endl<<"actord is: "<<actOrd;
         //config.isCycle = 1;
         
@@ -122,33 +146,31 @@ std::tuple<double, Solution, std::vector<std::vector<int>>> TabuSearch::run(json
         }
         if (s != nullptr)
         {
-            s->refactorSolution();
+            //s->refactorSolution();
             tabuLists[neighborhoodType].push_back(s->ext["state"]);
             while (tabuLists[neighborhoodType].size() > tabuDuration)
             {
                 tabuLists[neighborhoodType].erase(tabuLists[neighborhoodType].begin());
             }
+            currentSolution = *s;
             json jDroneOld(currentSolution.droneTripList);
             json jTechOld(currentSolution.techTripList);
             currentScore = currentSolution.getScore();
-            currentSolution = *s;
-            currentSolution.setInput(input);
             json jDrone(currentSolution.droneTripList);
             json jTech(currentSolution.techTripList);
-            if (currentSolution.check_feasible() && (currentScore - bestFeasibleScore < config.tabuEpsilon))
+            updatePenalty(currentSolution.dz, currentSolution.cz);
+            currentSolution.alpha1 = alpha1;
+            currentSolution.alpha2 = alpha2;
+            double besttScore = bestFeasibleSolution.getScore();
+            if (besttScore - bestFeasibleScore < config.tabuEpsilon)
             {
-                //config.isCycle = 0;
-                updatePenalty(bestSolution.dz, bestSolution.dz);
                 feasible["best feasible score"] = std::to_string(currentScore);
                 feasible["best feasible"] = std::to_string(currentScore) + jDrone.dump() + " || " + jTech.dump();
-                bestFeasibleSolution = currentSolution;
-                bestFeasibleSolution.setInput(input);
-                bestFeasibleScore = currentScore;
+                bestFeasibleScore = besttScore;
+                bestSolution = bestFeasibleBefore;
+                notImproveIter = 0;
+                config.isCycle = true;
             }else{
-                notFeasibleImprove = notFeasibleImprove + 1;
-                if (notFeasibleImprove >= 5){
-                    //config.isCycle = 0;
-                }
                 notImproveIter++;
                 if (notImproveIter > config.tabuNotImproveIter)
                 {
@@ -166,6 +188,7 @@ std::tuple<double, Solution, std::vector<std::vector<int>>> TabuSearch::run(json
 
         //        std::cout << it << ": " << itLog.dump(4) << std::endl;
     }
+    bestFeasibleSolution.refactorSolution();
     auto stop = high_resolution_clock::now();
     json jDroneBest(bestSolution.droneTripList);
     json jTechBest(bestSolution.techTripList);
@@ -176,7 +199,7 @@ TabuSearch::TabuSearch(Config &conf, Input &inp)
 {
     this->config = conf;
     this->input = inp;
-    this->tabuDuration = Random::get(config.minTabuDuration, config.maxTabuDuration);
+    this->tabuDuration = config.tabuDuration;
     this->alpha1 = conf.tabuAlpha1;
     this->alpha2 = conf.tabuAlpha2;
     Solution *init = Solution::initSolution(this->config, this->input, InitType::MIX, alpha1, alpha2);
@@ -189,22 +212,22 @@ TabuSearch::TabuSearch(Config &conf, Input &inp)
 
 void TabuSearch::updatePenalty(double dz, double cz)
 {
-    if (dz > 0)
+    if (std::abs(dz) > std::abs(config.tabuEpsilon))
     {
-        alpha1 *= 1 + config.tabuBeta;
+        alpha2 *= (1 + config.tabuBeta);
     }
     else
     {
-        alpha1 /= 1 + config.tabuBeta;
+        alpha2 /= (1 + config.tabuBeta);
     }
 
-    if (cz > 0)
+    if (std::abs(cz) > std::abs(config.tabuEpsilon))
     {
-        alpha2 *= 1 + config.tabuBeta;
+        alpha1 *= (1 + config.tabuBeta);
     }
     else
     {
-        alpha2 /= 1 + config.tabuBeta;
+        alpha1 /= (1 + config.tabuBeta);
     }
 }
 
@@ -244,6 +267,7 @@ Solution TabuSearch::runPostOptimization(json &log, Solution solution)
 
 Solution TabuSearch::runInterRoute(Solution &solution)
 {
+    Config config;
     auto rng = std::default_random_engine(std::chrono::system_clock::now()
                                               .time_since_epoch()
                                               .count());
@@ -255,10 +279,8 @@ Solution TabuSearch::runInterRoute(Solution &solution)
     double newScore;
 
     Solution *s;
-    int x = 0;
     while (true)
     {
-        x = x + 1;
         std::shuffle(order.begin(), order.end(), rng);
         bool hasImprove = false;
 
@@ -268,14 +290,14 @@ Solution TabuSearch::runInterRoute(Solution &solution)
             {
             case INTER_RELOCATE:
             {
-                s = solution.relocate({}, solution1, INTER);
+                s = solution1.relocate({}, solution, INTER);
                 if (s != nullptr)
                 {
-                    newScore = s->getScore();
-                    if (newScore < score && s->check_feasible())
+                    double newScore = solution.getScore();
+                    if (newScore < score)
                     {
-                        x = 0;
-                        solution = *s;
+                        solution1.droneTripList = s->droneTripList;
+                        solution1.techTripList = s->techTripList;
                         score = newScore;
                         hasImprove = true;
                     }
@@ -284,14 +306,14 @@ Solution TabuSearch::runInterRoute(Solution &solution)
             }
             case INTER_EXCHANGE:
             {
-                s = solution.exchange({}, solution1, INTER);
+                s = solution1.exchange({}, solution, INTER);
                 if (s != nullptr)
                 {
-                    newScore = s->getScore();
-                    if (newScore < score && s->check_feasible())
+                    double newScore = solution.getScore();
+                    if (newScore < score)
                     {
-                        x = 0;
-                        solution = *s;
+                        solution1.droneTripList = s->droneTripList;
+                        solution1.techTripList = s->techTripList;
                         score = newScore;
                         hasImprove = true;
                     }
@@ -300,14 +322,14 @@ Solution TabuSearch::runInterRoute(Solution &solution)
             }
             case INTER_OR_OPT:
             {
-                s = solution.orOpt({}, solution1, INTER);
+                s = solution1.orOpt({}, solution, INTER);
                 if (s != nullptr)
                 {
-                    newScore = s->getScore();
-                    if (newScore < score && s->check_feasible())
+                    double newScore = solution.getScore();
+                    if (newScore < score)
                     {
-                        x = 0;
-                        solution = *s;
+                        solution1.droneTripList = s->droneTripList;
+                        solution1.techTripList = s->techTripList;
                         score = newScore;
                         hasImprove = true;
                     }
@@ -316,14 +338,14 @@ Solution TabuSearch::runInterRoute(Solution &solution)
             }
             case INTER_TWO_OPT:
             {
-                s = solution.twoOpt({}, solution1, INTER);
+                s = solution1.twoOpt({}, solution, INTER);
                 if (s != nullptr)
                 {
-                    newScore = s->getScore();
-                    if (newScore < score && s->check_feasible())
+                    double newScore = solution.getScore();
+                    if (newScore < score)
                     {
-                        x = 0;
-                        solution = *s;
+                        solution1.droneTripList = s->droneTripList;
+                        solution1.techTripList = s->techTripList;
                         score = newScore;
                         hasImprove = true;
                     }
@@ -332,14 +354,14 @@ Solution TabuSearch::runInterRoute(Solution &solution)
             }
             case INTER_CROSS_EXCHANGE:
             {
-                s = solution.crossExchange({}, solution1, INTER);
+                s = solution1.crossExchange({}, solution, INTER);
                 if (s != nullptr)
                 {
-                    newScore = s->getScore();
-                    if (newScore < score && s->check_feasible())
+                    double newScore = solution.getScore();
+                    if (newScore < score)
                     {
-                        x = 0;
-                        solution = *s;
+                        solution1.droneTripList = s->droneTripList;
+                        solution1.techTripList = s->techTripList;
                         score = newScore;
                         hasImprove = true;
                     }
@@ -350,9 +372,9 @@ Solution TabuSearch::runInterRoute(Solution &solution)
         }
         solution.refactorSolution();
 
-        if (!hasImprove && x >= 5)
+        if (!hasImprove)
         {
-            std::cout<<std::endl<<x<<" | "<<solution.getScore();
+            std::cout<<std::endl<<" | "<<solution.getScore();
             break;
         }
     }
@@ -361,6 +383,7 @@ Solution TabuSearch::runInterRoute(Solution &solution)
 
 Solution TabuSearch::runIntraRoute(Solution &solution)
 {
+    Config config;
     auto rng = std::default_random_engine(std::chrono::system_clock::now()
                                               .time_since_epoch()
                                               .count());
@@ -369,11 +392,9 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
     double score = solution.getScore();
     Solution solution1 = solution;
     double newScore;
-    int x = 0;
     Solution *s;
     while (true)
     {
-        x = x + 1;
         std::shuffle(order.begin(), order.end(), rng);
         bool hasImprove = false;
 
@@ -383,14 +404,14 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
             {
             case INTRA_RELOCATE:
             {
-                s = solution.relocate({}, solution1, INTRA);
+                s = solution1.relocate({}, solution, INTRA);
                 if (s != nullptr)
                 {
-                    newScore = s->getScore();
-                    if (newScore < score && s->check_feasible())
+                    double newScore = solution.getScore();
+                    if (newScore < score)
                     {
-                        x = 0;
-                        solution = *s;
+                        solution1.droneTripList = s->droneTripList;
+                        solution1.techTripList = s->techTripList;
                         score = newScore;
                         hasImprove = true;
                     }
@@ -399,14 +420,14 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
             }
             case INTRA_EXCHANGE:
             {
-                s = solution.exchange({}, solution1, INTRA);
+                s = solution1.exchange({}, solution, INTRA);
                 if (s != nullptr)
                 {
-                    newScore = s->getScore();
-                    if (newScore < score && s->check_feasible())
+                    double newScore = solution.getScore();
+                    if (newScore < score)
                     {
-                        x = 0;
-                        solution = *s;
+                        solution1.droneTripList = s->droneTripList;
+                        solution1.techTripList = s->techTripList;
                         score = newScore;
                         hasImprove = true;
                     }
@@ -415,14 +436,14 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
             }
             case INTRA_TWO_OPT:
             {
-                s = solution.twoOpt({}, solution1, INTRA);
+                s = solution1.twoOpt({}, solution, INTRA);
                 if (s != nullptr)
                 {
-                    newScore = s->getScore();
-                    if (newScore < score && s->check_feasible())
+                    double newScore = solution.getScore();
+                    if (newScore < score)
                     {
-                        x = 0;
-                        solution = *s;
+                        solution1.droneTripList = s->droneTripList;
+                        solution1.techTripList = s->techTripList;
                         score = newScore;
                         hasImprove = true;
                     }
@@ -431,27 +452,28 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
             }
             case INTRA_OR_OPT:
             {
-                s = solution.orOpt({}, solution1, INTRA);
+                s = solution1.orOpt({}, solution, INTRA);
                 if (s != nullptr)
                 {
-                    newScore = s->getScore();
-                    if (newScore < score && s->check_feasible())
+                    double newScore = solution.getScore();
+                    if (newScore < score)
                     {
-                        x = 0;
-                        solution = *s;
+                        solution1.droneTripList = s->droneTripList;
+                        solution1.techTripList = s->techTripList;
                         score = newScore;
                         hasImprove = true;
                     }
                 }
+
                 break;
             }
             }
         }
         solution.refactorSolution();
 
-        if (!hasImprove && x >= 5)
+        if (!hasImprove)
         {
-            std::cout<<std::endl<<x<<" | "<<solution.getScore();
+            std::cout<<std::endl<<" | "<<solution.getScore();
             break;
         }
     }
@@ -460,7 +482,30 @@ Solution TabuSearch::runIntraRoute(Solution &solution)
 
 Solution TabuSearch::runEjection(Solution &solution)
 {
-    solution = solution.ejection();
+    Config config;
+    Solution solution1 = solution;
+    double score = solution1.getScore();
+    Solution *s;
+
+    while (true){
+        bool hasImprove = false;
+        s = solution1.ejectionNeighborhoodAdd(solution);
+        if (s != nullptr)
+        {
+            double newScore = solution.getScore();
+            if (newScore < score)
+            {
+                solution1.droneTripList = s->droneTripList;
+                solution1.techTripList = s->techTripList;
+                score = newScore;
+                hasImprove = true;
+            }
+        }
+        if (!hasImprove)
+        {
+            break;
+        }
+    }
     solution.refactorSolution();
     return solution;
 }
