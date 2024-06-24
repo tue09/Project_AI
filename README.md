@@ -21,8 +21,8 @@ This is a project for the AI course, implemented in C++ using CMake. The project
 
 1. **Clone the repository**:
     ```sh
-    git clone <repository_url>
-    cd <repository_directory>
+    git clone <https://github.com/tue09/Project_AI/edit/master/README.md>
+    cd <build>
     ```
 
 2. **Build the project**:
